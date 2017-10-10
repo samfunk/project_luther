@@ -1,6 +1,12 @@
 # Investigating the Federal Reserve's Influence on the S&P 500  
 
-<p align="center"><img src="http://www.frontpagemag.com/sites/default/files/uploads/2014/10/janet-yellen.jpg" alt="Yellen" width="500"/></p>  
+<div>
+  <p align="center">
+   <img src="http://now.tufts.edu/sites/default/files/bodyimages/131014_FAMA_1%20(2).jpg" alt="Fama" width="160" height="220" align="left"/> 
+   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Janet_Yellen_official_Federal_Reserve_portrait.jpg/220px-Janet_Yellen_official_Federal_Reserve_portrait.jpg" alt="Yellen" width="160" height="220" align="center"/>
+   <img src="https://www.nobelprize.org/nobel_prizes/economic-sciences/laureates/1976/friedman.jpg" alt="Friedman" width="160" height="220" align="right"/>
+   </p>
+</div>
 
 ## Overview  
 
@@ -25,7 +31,13 @@ Finally, with the S&P 500 as my independent variable, I pulled historical, daily
 
 Before I jumped into any regressions, I needed to take a good look at my data. One issue I ran into immediately was the fact I was using stock market data, which is a sequence of discrete-time data. When it comes to linear regressions, time series data can prove to be problematic since individual data points can potentially be influenced by past or future data points. To solve this issue of autocorrelation, I took the daily difference of the SPX and used those values as my target variable. This technique of differencing greatly reduces autocorrelation and the underlying trend present in the closing SPX values as well as making the data stationary. At this point, I was able to make the assumption that my data would be able to be used for linear regression. It is important to note that my results could still potentially be affected by time, which could lead to spurious results.
 
-As for my features, I narrowed the relevant variables down to 'Fed' articles per, the proportion of 'Fed' articles to economic articles, daily statistical releases, and the weighted Google Trends score. These were the only variables with any semblance of correlation with the SPX. It should be noted that the first two features related to 'Fed' articles had a high positive correlation. The next section on my regression model will address this issue. Finally, I transformed the dependent variable by taking the absolute value of the daily difference in index level. This decision was made with the naive nature of my features in mind. None of the articles or Fed events were measured on the connotation of their content, therefore, making the index's change in magnitude more important than the direction.
+![Trends](/images/trend.png?raw=true "Trend vs. Absolute Difference")  
+
+![ACF](/images/acf.png?raw=true "Trend ACF vs. Absolute Difference ACF")  
+
+As for my features, I narrowed the relevant variables down to 'Fed' articles per, the proportion of 'Fed' articles to economic articles, daily statistical releases, and the weighted Google Trends score. These were the only variables with any semblance of correlation with the SPX. It should be noted that the first two features related to 'Fed' articles had a high positive correlation. The next section on my regression model will address this issue. Finally, I transformed the dependent variable by taking the absolute value of the daily difference in index level. This decision was made with the naive nature of my features in mind. None of the articles or Fed events were measured on the connotation of their content, therefore, making the index's change in magnitude more important than the direction.  
+
+![Pairplot](/images/pairplot.png?raw=true "Feature Pairplot")
 
 ## Regression Model  
 
@@ -33,6 +45,8 @@ Since I used daily variables, my data set was shrunk down to only 84 observation
 
 ## Results  
 
-The best model (alpha of 1e-5 with an intercept) did not perform well. It scored a mean squared error of 117.956 and an R-squared of 0.04, meaning the model does very little to explain the variability of the absolute daily change of the SPX. Additionally, none of the coefficients were statistically significant. Looking at the predictions and residual distribution, we can see this model violates multiple linear regression assumptions.
+The best model (alpha of 1e-5 with an intercept) did not perform well. It scored a mean squared error of 62.51 and an R-squared of 0.04, meaning the model does very little to explain the variability of the absolute daily change of the SPX. Additionally, none of the coefficients were statistically significant. Looking at the predictions and residual distribution, we can see this model violates multiple linear regression assumptions.
+
+![Model](/images/unsplit_lasso.png?raw=true "LR Model (Lasso)")
 
 This failure in modeling could be attributed to the time series nature of the data, however, it is more likely the features included are simply not sufficient in predicting the movement of the SPX. Many other exogenous variables such as macroeconomic factors and corporate earnings would need to be incorporated into the model. On top of that, this model could be improved by increasing the time horizon and number of news sources used. Beyond that, a deeper analysis of the content of each relevant article using Natural Language Processing could lead to further insights into the Fed's activity and its corresponding effects on the market. Although this model did not accurately explain what it was set out to do, it does reinforce Fama's hypothesis that it is difficult to predict future returns and Friedman's argument that the Federal Reserve should be calculated and credible.
